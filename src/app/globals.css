@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+/* next-themes writes `class="dark"` onto <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ═══════════════════════════════════════════════════════════
+   Desmark Twintra — design tokens
+   Brand palette carried over from the original company profile.
+   The violet ramp is the brand's dark-panel color everywhere —
+   the hero surface, the footer, the drawer, and every full-bleed
+   dark section.
+
+   Two families live here:
+
+   • Brand tokens (cream, chilli, amber, violet) are the same in
+     both themes. They describe ink on the always-dark panels —
+     the hero, the violet bands, the footer — which look
+     identical whichever theme is active.
+
+   • Role tokens (surface, card, heading, outline, accent,
+     success, and the ink ramp) describe the *page ground* and
+     what sits on it. Only these flip; the `.dark` block below
+     is the single place that redefines them.
+   ═══════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Brand — warm neutrals */
+  --color-cream: #faf6ee;
+  --color-cream-deep: #f3ecdd;
+  --color-cream-line: #e8dfcc;
+
+  /* Brand — chilli */
+  --color-chilli: #c0392b;
+  --color-chilli-warm: #e05f3a;
+  --color-amber: #d4880a;
+  --color-gold: #b8922a;
+
+  /* Ink */
+  --color-ink: #1a1a1a;
+  --color-ink-mid: #3d3d3d;
+  --color-ink-muted: #6b6b6b;
+
+  /* Hero violet ramp */
+  --color-violet-950: #120a26;
+  --color-violet-900: #1e1140;
+  --color-violet-800: #2f1b60;
+  --color-violet-700: #452888;
+  --color-violet-600: #6437bd;
+  --color-violet-500: #8b5cf6;
+  --color-violet-400: #a78bfa;
+  --color-violet-300: #c4b5fd;
+  --color-violet-200: #ded5fe;
+
+  /* ── Role tokens — the only ones that change between themes ──
+     `cream` and `white` each did double duty before: page ground
+     *and* ink on the dark panels. Splitting the ground off into
+     its own token is what lets the panels stay put while the page
+     inverts. */
+  --color-surface: #faf6ee; /* page ground (light: cream) */
+  --color-card: #ffffff; /* raised card on the ground */
+  --color-heading: #1e1140; /* headings (light: violet-900) */
+  --color-outline: #1e1140; /* tint source for hairlines and washes */
+  --color-accent: #c0392b; /* chilli, as ink on the ground */
+  --color-success: #2d5a3f; /* muted green — success/active state, kept independent of the brand panel color */
+
+  /* The always-branded band (hero, journey, contact, footer, drawer header,
+     404) — background + ink for content sitting on it. Unlike the brand
+     tokens above, these flip with the theme so the band reads as "light
+     brand panel" / "dark brand panel" rather than staying frozen dark. */
+  --color-panel: #faf6ee; /* light: cream ground */
+  --color-panel-ink: #1e1140; /* light: violet-900 ink */
+  --color-panel-accent: #6437bd; /* light: violet-600 — saturated enough to read on cream */
+
+  /* Paper-dot texture, keyed off the ground */
+  --paper-dot: rgba(30, 17, 64, 0.055);
+
+  /* Type */
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Dark theme
+   Anchored on #22272e — a desaturated blue-grey, deliberately
+   not pure black, so the always-dark violet panels (#1e1140)
+   still read as a distinct band against it.
+   Unlayered, so it outranks the `@theme` values in `@layer theme`.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Ground and the things sitting on it */
+  --color-surface: #22272e;
+  --color-card: #2a3038;
+  --color-cream-deep: #1a1f25; /* recessed alternating band */
+  --color-cream-line: #363d47; /* hairline */
+  --color-outline: #c8d2de;
+  --color-heading: #e9edf3;
+
+  /* Ink ramp inverts wholesale — it is only ever used on the ground */
+  --color-ink: #e9edf3;
+  --color-ink-mid: #b7c0cc;
+  --color-ink-muted: #8b95a3;
+
+  /* Brand accents lifted until they clear 4.5:1 on #22272e */
+  --color-accent: #f0836d;
+  --color-success: #6fc48d;
+
+  --paper-dot: rgba(200, 210, 222, 0.05);
+
+  /* Dark theme: the panel keeps today's always-dark violet look unchanged. */
+  --color-panel: #1e1140;
+  --color-panel-ink: #faf6ee;
+  --color-panel-accent: #c4b5fd;
+}
+
+@layer base {
+  html {
+    /* Paints the overscroll gutter to match the page */
+    background-color: var(--color-surface);
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* AppScrollArea's viewport is the real scrolling box, so the smooth-scroll
+     and anchor-offset behavior that used to live on html lives here instead. */
+  .app-scroll-viewport {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6.5rem;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    color: var(--color-heading);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Panel sections get a ring tuned to their own ink, not the page's */
+  .on-dark :focus-visible {
+    outline-color: var(--color-panel-accent);
+  }
+}
+
+@layer utilities {
+  /* ─── Hero mesh: layered radial gradients over the panel ground.
+     Light is a warm cream wash (same bloom rhythm as About's stat-grid
+     wash); dark is the original deep-violet mesh, unchanged. ─── */
+  .bg-hero-mesh {
+    background-color: var(--color-cream);
+    background-image:
+      radial-gradient(ellipse 60% 55% at 12% 8%, rgba(192, 57, 43, 0.1) 0%, transparent 62%),
+      radial-gradient(ellipse 55% 60% at 88% 92%, rgba(184, 146, 42, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 65% at 24% 42%, rgba(139, 92, 246, 0.14) 0%, transparent 64%),
+      radial-gradient(ellipse 65% 70% at 78% 30%, rgba(100, 55, 189, 0.1) 0%, transparent 66%),
+      linear-gradient(155deg, #fdf9f1 0%, #f7f0e1 45%, #f3ecdd 100%);
+  }
+
+  .dark .bg-hero-mesh {
+    background-color: var(--color-violet-950);
+    background-image:
+      radial-gradient(
+        ellipse 60% 55% at 12% 8%,
+        rgba(224, 168, 120, 0.32) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 55% 60% at 88% 92%,
+        rgba(226, 158, 118, 0.24) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 70% 65% at 24% 42%,
+        rgba(140, 88, 235, 0.55) 0%,
+        transparent 64%
+      ),
+      radial-gradient(
+        ellipse 65% 70% at 78% 30%,
+        rgba(92, 46, 178, 0.62) 0%,
+        transparent 66%
+      ),
+      radial-gradient(
+        ellipse 90% 80% at 50% 100%,
+        rgba(18, 10, 38, 0.9) 0%,
+        transparent 70%
+      ),
+      linear-gradient(155deg, #2a1657 0%, #1d1042 38%, #150c31 70%, #100822 100%);
+  }
+
+  /* Fine grid lines, matching the original profile's hero treatment */
+  .bg-hero-grid {
+    background-image:
+      linear-gradient(rgba(30, 17, 64, 0.085) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 17, 64, 0.085) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  .dark .bg-hero-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  }
+
+  /* Film grain — keeps large gradient fields from banding */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* Ground-section paper texture (the ChronoTask reference's soft dot field) */
+  .bg-paper-dots {
+    background-image: radial-gradient(var(--paper-dot) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .text-balance-tight {
+    text-wrap: balance;
+  }
+}
+
+/* ─── Orbit animation for the hero visual ───
+   One animation per node: it rotates the node around the ring and
+   counter-rotates it by the same amount, so artwork stays upright.
+   `--duration`, `--radius` and `--angle` are set per node by OrbitingCircles. */
+@theme inline {
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(var(--angle)) translateY(var(--radius))
+        rotate(calc(var(--angle) * -1));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) + 360deg)) translateY(var(--radius))
+        rotate(calc((var(--angle) * -1) - 360deg));
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+@keyframes dt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dt-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes dt-pulse-ring {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.14;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+}
+
+/* Slow conic light sweep travelling around the orbit rings */
+.animate-sweep {
+  animation: dt-spin 26s linear infinite;
+}
+.animate-float {
+  animation: dt-float 7s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: dt-pulse-ring 9s ease-in-out infinite;
+}
+
+/* Horizontally-scrolling mobile strips (section tabs, product chips) that
+   should scroll by touch/drag without a visible scrollbar track. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Scoped to AnimatedThemeToggler — it sets this data-attribute and variable only during a theme toggle. */
+html[data-magicui-theme-vt="active"]::view-transition-group(root) {
+  animation-duration: var(--magicui-theme-toggle-vt-duration);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-scroll-viewport {
+    scroll-behavior: auto;
+  }
+
+  .animate-orbit,
+  .animate-sweep,
+  .animate-float,
+  .animate-pulse-ring,
+  .animate-marquee,
+  .animate-marquee-vertical {
+    animation: none !important;
+  }
+
+  /* Reveal has to render its animated branch for the hydration pass — the
+     server cannot read this media query — so cancel motion's inline entry
+     styles until the client swaps the static branch in. Without this the
+     content would sit at opacity 0 until JS lands. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
