@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useController, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check, Loader2, TriangleAlert } from "lucide-react";
 import {
@@ -16,6 +16,13 @@ import { products, getProduct } from "@/content/products";
 import { contact } from "@/content/company";
 import { useQuote } from "./quote-provider";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 const fieldBase =
@@ -79,6 +86,7 @@ export function EnquiryForm({
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting, isDirty },
@@ -86,6 +94,10 @@ export function EnquiryForm({
     resolver: zodResolver(enquirySchema),
     defaultValues: basketAwareDefaults(),
   });
+
+  const buyerTypeField = useController({ control, name: "buyerType" });
+  const productField = useController({ control, name: "product" });
+  const unitField = useController({ control, name: "unit" });
 
   // Keep the form's defaults in step with the basket while the buyer hasn't
   // started typing — e.g. they add products, then scroll straight to Contact.
@@ -225,19 +237,26 @@ export function EnquiryForm({
         <label htmlFor={`${uid}-buyer`} className={labelBase}>
           I am a <span className="text-accent">*</span>
         </label>
-        <select
-          id={`${uid}-buyer`}
-          className={cn(fieldBase, "appearance-none bg-card pr-10")}
-          aria-invalid={!!errors.buyerType}
-          aria-describedby={errors.buyerType ? `${uid}-buyer-err` : undefined}
-          {...register("buyerType")}
+        <Select
+          value={buyerTypeField.field.value}
+          onValueChange={buyerTypeField.field.onChange}
         >
-          {BUYER_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            id={`${uid}-buyer`}
+            onBlur={buyerTypeField.field.onBlur}
+            aria-invalid={!!errors.buyerType}
+            aria-describedby={errors.buyerType ? `${uid}-buyer-err` : undefined}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {BUYER_TYPES.map((t) => (
+              <SelectItem key={t} value={t}>
+                {t}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <FieldError id={`${uid}-buyer-err`} message={errors.buyerType?.message} />
       </div>
 
@@ -247,18 +266,22 @@ export function EnquiryForm({
             <label htmlFor={`${uid}-product`} className={labelBase}>
               Product of interest
             </label>
-            <select
-              id={`${uid}-product`}
-              className={cn(fieldBase, "appearance-none bg-card pr-10")}
-              {...register("product")}
+            <Select
+              value={productField.field.value}
+              onValueChange={productField.field.onChange}
             >
-              <option value="">General enquiry</option>
-              {products.map((p) => (
-                <option key={p.slug} value={p.name}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id={`${uid}-product`} onBlur={productField.field.onBlur}>
+                <SelectValue placeholder="General enquiry" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">General enquiry</SelectItem>
+                {products.map((p) => (
+                  <SelectItem key={p.slug} value={p.name}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -276,20 +299,28 @@ export function EnquiryForm({
                 aria-describedby={errors.quantity ? `${uid}-quantity-err` : undefined}
                 {...register("quantity")}
               />
-              <select
-                aria-label="Quantity unit"
-                className={cn(fieldBase, "w-32 shrink-0 appearance-none bg-card")}
-                aria-invalid={!!errors.unit}
-                aria-describedby={errors.unit ? `${uid}-unit-err` : undefined}
-                {...register("unit")}
+              <Select
+                value={unitField.field.value}
+                onValueChange={unitField.field.onChange}
               >
-                <option value="">Unit</option>
-                {QUANTITY_UNITS.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger
+                  aria-label="Quantity unit"
+                  onBlur={unitField.field.onBlur}
+                  aria-invalid={!!errors.unit}
+                  aria-describedby={errors.unit ? `${uid}-unit-err` : undefined}
+                  className="w-32 shrink-0"
+                >
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Unit</SelectItem>
+                  {QUANTITY_UNITS.map((u) => (
+                    <SelectItem key={u} value={u}>
+                      {u}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <FieldError id={`${uid}-quantity-err`} message={errors.quantity?.message} />
             <FieldError id={`${uid}-unit-err`} message={errors.unit?.message} />
