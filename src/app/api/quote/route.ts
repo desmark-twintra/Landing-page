@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { send } from "@emailjs/nodejs";
 import { enquirySchema } from "@/lib/schemas";
+import { contact } from "@/content/company";
 
 export async function POST(request: Request) {
   let payload: unknown;
@@ -33,22 +35,51 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  // ───────────────────────────────────────────────────────────────
-  // TODO: Wire up delivery here. Everything above is done — this is
-  // the only place that needs configuration. Pick one:
-  //
-  //   • Email    — Resend / Nodemailer to contact.email
-  //   • CRM      — HubSpot / Zoho lead create
-  //   • Database — Postgres / Supabase insert
-  //
-  // Read credentials from environment variables (never inline them),
-  // e.g. process.env.RESEND_API_KEY, and return { ok: false } with a
-  // 502 if delivery fails so the form can surface a retry message.
-  // ───────────────────────────────────────────────────────────────
-  console.log("[enquiry received]", {
-    ...enquiry,
-    receivedAt: new Date().toISOString(),
-  });
+  const templateParams = {
+    to_email: contact.email,
+    from_name: enquiry.name,
+    from_email: enquiry.email,
+    company: enquiry.company || "—",
+    phone: enquiry.phone || "—",
+    buyer_type: enquiry.buyerType,
+    product: enquiry.product || "General enquiry",
+    quantity: enquiry.quantity ? `${enquiry.quantity} ${enquiry.unit}` : "—",
+    message: enquiry.message,
+  };
+
+  const emailjsOptions = {
+    publicKey: process.env.EMAILJS_PUBLIC_KEY!,
+    privateKey: process.env.EMAILJS_PRIVATE_KEY!,
+  };
+
+  try {
+    await send(
+      process.env.EMAILJS_SERVICE_ID!,
+      process.env.EMAILJS_TEMPLATE_ID!,
+      templateParams,
+      emailjsOptions,
+    );
+  } catch (err) {
+    console.error("[enquiry email failed]", err);
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "We couldn't send that just now. Please email us directly.",
+      },
+      { status: 502 },
+    );
+  }
+
+  // Confirmation email back to the buyer — best-effort, since a failure here
+  // shouldn't block the "enquiry received" success state (we already have it).
+  if (process.env.EMAILJS_AUTOREPLY_TEMPLATE_ID) {
+    void send(
+      process.env.EMAILJS_SERVICE_ID!,
+      process.env.EMAILJS_AUTOREPLY_TEMPLATE_ID,
+      templateParams,
+      emailjsOptions,
+    ).catch((err) => console.error("[auto-reply email failed]", err));
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -14,7 +14,7 @@ export const company = {
 
 export const contact = {
   company: "Desmark Twintra LLP",
-  email: "desmarktwintrallp@gmail.com",
+  email: "desmarkit@gmail.com",
   phone: "+91 80562 50963",
   phoneHref: "+918056250963",
   location: "Chennai, Tamil Nadu, India",
