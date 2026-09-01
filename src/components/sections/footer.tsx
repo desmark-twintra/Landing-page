@@ -12,7 +12,7 @@ export function Footer() {
       {/* pb-32 clears the fixed mobile Call/Enquire bar (mobile-cta-bar.tsx) plus
           env(safe-area-inset-bottom) on notched phones; lg:pb-0 keeps desktop
           unchanged, which has no such bar. */}
-      <Container className="py-14 sm:py-16">
+      <Container className="py-16 sm:py-20 lg:py-24">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <BrandMark tone="dark" />
@@ -83,12 +83,15 @@ export function Footer() {
             >
               {contact.email}
             </a>
-            <a
-              href={`tel:${contact.phoneHref}`}
-              className="underline-offset-4 transition-colors hover:text-panel-ink/70 hover:underline"
-            >
-              {contact.phone}
-            </a>
+            {contact.phones.map((p) => (
+              <a
+                key={p.href}
+                href={`tel:${p.href}`}
+                className="underline-offset-4 transition-colors hover:text-panel-ink/70 hover:underline"
+              >
+                {p.display}
+              </a>
+            ))}
             <span>{contact.location}</span>
           </div>
         </div>

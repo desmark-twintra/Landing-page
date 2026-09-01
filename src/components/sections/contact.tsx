@@ -5,11 +5,17 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
 import { EnquiryForm } from "@/components/quote/enquiry-form";
 
-const details = [
+const details: {
+  icon: typeof Building2;
+  label: string;
+  value: string | null;
+  href: string | null;
+  phones?: typeof contact.phones;
+}[] = [
   { icon: Building2, label: "Company", value: contact.company, href: null },
   { icon: Receipt, label: "GSTIN", value: contact.gstin, href: null },
   { icon: Mail, label: "Email", value: contact.email, href: `mailto:${contact.email}` },
-  { icon: Phone, label: "Phone", value: contact.phone, href: `tel:${contact.phoneHref}` },
+  { icon: Phone, label: "Phone", value: null, href: null, phones: contact.phones },
   { icon: MapPin, label: "Location", value: contact.location, href: null },
   {
     icon: Globe,
@@ -31,13 +37,13 @@ export function Contact() {
         }}
       />
       {/* Deepens the panel toward its centre — only reads correctly against
-          the always-dark violet panel, so it's dark-theme only. */}
+          the dark warm-near-black panel, so it's dark-theme only. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 hidden opacity-90 dark:block"
         style={{
           background:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(47,27,96,0.5) 0%, transparent 70%)",
+            "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(10,7,6,0.55) 0%, transparent 70%)",
         }}
       />
 
@@ -60,7 +66,7 @@ export function Contact() {
 
           <Reveal delay={2}>
             <dl className="mt-10 space-y-px overflow-hidden rounded-2xl border border-panel-ink/10 bg-panel-ink/[0.04]">
-              {details.map(({ icon: Icon, label, value, href }) => (
+              {details.map(({ icon: Icon, label, value, href, phones }) => (
                 <div
                   key={label}
                   className="flex items-start gap-4 border-b border-panel-ink/[0.07] px-5 py-4 last:border-b-0"
@@ -73,7 +79,19 @@ export function Contact() {
                       {label}
                     </dt>
                     <dd className="mt-1 break-words text-[14.5px] text-panel-ink/85">
-                      {href ? (
+                      {phones ? (
+                        <span className="flex flex-col gap-1">
+                          {phones.map((p) => (
+                            <a
+                              key={p.href}
+                              href={`tel:${p.href}`}
+                              className="underline-offset-4 transition-colors hover:text-accent hover:underline"
+                            >
+                              {p.display}
+                            </a>
+                          ))}
+                        </span>
+                      ) : href ? (
                         <a
                           href={href}
                           className="underline-offset-4 transition-colors hover:text-accent hover:underline"

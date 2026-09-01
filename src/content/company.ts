@@ -17,6 +17,10 @@ export const contact = {
   email: "desmarkit@gmail.com",
   phone: "+91 80562 50963",
   phoneHref: "+918056250963",
+  phones: [
+    { display: "+91 80562 50963", href: "+918056250963" },
+    { display: "+91 97898 65274", href: "+919789865274" },
+  ],
   location: "Chennai, Tamil Nadu, India",
   website: null as string | null,
   gstin: "33AAZFD7884N1ZA",
