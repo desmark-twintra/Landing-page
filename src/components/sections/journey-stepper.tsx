@@ -24,6 +24,12 @@ const statusText: Record<PhaseStatus, string> = {
   vision: "text-panel-ink/55",
 };
 
+const statusChip: Record<PhaseStatus, string> = {
+  active: "border-accent/30 bg-accent/10",
+  planned: "border-panel-ink/25 bg-panel-ink/[0.06]",
+  vision: "border-panel-ink/15 bg-panel-ink/[0.03]",
+};
+
 function StepIcon({ status, step }: { status: PhaseStatus; step: number }) {
   if (status === "active") return <Check className="size-5" aria-hidden />;
   if (status === "vision") return <Circle className="size-3.5" aria-hidden />;
@@ -109,8 +115,8 @@ export function JourneyStepper() {
 
                   <span
                     className={cn(
-                      "mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors",
-                      isSelected ? "text-accent" : statusText[p.status],
+                      "mt-4 inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors",
+                      isSelected ? "border-accent/30 bg-accent/10 text-accent" : cn(statusChip[p.status], statusText[p.status]),
                     )}
                   >
                     {p.badge}
@@ -224,8 +230,10 @@ export function JourneyStepper() {
                     <span className="flex-1">
                       <span
                         className={cn(
-                          "block text-[11px] font-semibold uppercase tracking-[0.16em]",
-                          p.status === "active" ? "text-accent" : statusText[p.status],
+                          "inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]",
+                          p.status === "active"
+                            ? "border-accent/30 bg-accent/10 text-accent"
+                            : cn(statusChip[p.status], statusText[p.status]),
                         )}
                       >
                         {p.badge}

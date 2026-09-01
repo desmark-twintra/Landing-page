@@ -13,7 +13,7 @@ export function PromiseStrip() {
         }}
       />
 
-      <Container className="relative py-14 sm:py-16">
+      <Container className="relative py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col items-center gap-5 text-center">
           <blockquote className="max-w-3xl font-display text-[1.6rem] italic leading-[1.35] tracking-[-0.01em] text-panel-ink text-balance-tight sm:text-[2.1rem]">
             &ldquo;{company.promise}&rdquo;
