@@ -3,6 +3,7 @@ import { Outfit, Ubuntu } from "next/font/google";
 import { company, contact } from "@/content/company";
 import { SiteHeader } from "@/components/sections/site-header";
 import { MobileCtaBar } from "@/components/sections/mobile-cta-bar";
+import { DesktopEnquireBar } from "@/components/sections/desktop-enquire-bar";
 import { Footer } from "@/components/sections/footer";
 import { QuoteProvider } from "@/components/quote/quote-provider";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -112,6 +113,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <Footer />
               </AppScrollArea>
               <MobileCtaBar />
+              <DesktopEnquireBar />
             </QuoteProvider>
           </ScrollViewportProvider>
         </ThemeProvider>
