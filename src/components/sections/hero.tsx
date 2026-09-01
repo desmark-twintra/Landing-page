@@ -3,7 +3,10 @@ import { Container } from "@/components/ui/container";
 import { QuoteButton } from "@/components/quote/quote-button";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { InteractiveHoverLink } from "@/components/ui/interactive-hover-button";
-import { OrbitVisual } from "./orbit-visual";
+// Retired in favour of a calmer, static product grid — see HeroProductShowcase.
+// import { OrbitVisual } from "./orbit-visual";
+// Retired static grid — see hero-product-showcase.tsx
+import { HeroProductCarousel } from "./hero-product-carousel";
 import { cn } from "@/lib/utils";
 
 /**
@@ -61,7 +64,7 @@ export function Hero() {
               </p>
 
               <div className="mt-[clamp(1.25rem,3vh,2.25rem)] flex flex-wrap items-center gap-3">
-                <QuoteButton variant="violet" size="lg" interactive>
+                <QuoteButton variant="primary" size="lg" interactive>
                   Start an Enquiry
                 </QuoteButton>
 
@@ -71,9 +74,9 @@ export function Hero() {
               </div>
             </div>
 
-            {/* ─── Orbit graphic — live at every breakpoint ─── */}
+            {/* ─── Product showcase — live at every breakpoint ─── */}
             <div className="flex justify-center lg:justify-end">
-              <OrbitVisual className="animate-float" />
+              <HeroProductCarousel />
             </div>
           </div>
         </Container>
