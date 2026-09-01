@@ -84,7 +84,7 @@ export function QuoteListSheet({
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
+        <div className="fixed inset-0 z-[100]">
           <motion.button
             type="button"
             aria-label="Close quote list"
@@ -101,7 +101,7 @@ export function QuoteListSheet({
             role="dialog"
             aria-modal="true"
             aria-labelledby="quote-list-title"
-            className="absolute inset-x-0 bottom-0 flex max-h-[80vh] flex-col overflow-hidden rounded-t-3xl border-t border-cream-line bg-surface px-5 pb-[calc(20px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-24px_60px_-24px_rgba(30,17,64,0.45)]"
+            className="absolute inset-x-0 bottom-0 flex max-h-[80vh] w-full flex-col overflow-hidden rounded-t-3xl border-t border-cream-line bg-surface px-5 pb-[calc(20px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-24px_60px_-24px_rgba(30,17,64,0.45)] lg:inset-x-auto lg:inset-y-8 lg:bottom-auto lg:right-8 lg:max-w-md lg:rounded-3xl lg:border lg:pb-5"
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: 40 }}
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 32 }}

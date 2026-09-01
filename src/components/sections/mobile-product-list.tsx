@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { products } from "@/content/products";
+import type { Product } from "@/content/products";
 import { useQuote } from "@/components/quote/quote-provider";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,10 @@ import { cn } from "@/lib/utils";
  * Phone/tablet-only product list — rows instead of cards, with a per-product
  * "add to quote" toggle wired into the client-side basket (see
  * quote-provider.tsx). Desktop keeps the existing ProductCard grid untouched.
+ * Receives the (possibly category-filtered) list from Products() so mobile
+ * and desktop stay in sync with the same filter.
  */
-export function MobileProductList() {
+export function MobileProductList({ products }: { products: Product[] }) {
   const { toggleBasketItem, isInBasket } = useQuote();
 
   return (

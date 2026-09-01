@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
@@ -5,8 +8,17 @@ import { products, productsIntro, tradeTerms } from "@/content/products";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { QuoteButton } from "@/components/quote/quote-button";
+import { useQuote } from "@/components/quote/quote-provider";
+import { cn } from "@/lib/utils";
 import { MobileProductList } from "./mobile-product-list";
+
+const FILTERS = [
+  { label: "All", value: "All" },
+  { label: "Whole", value: "Whole Spice" },
+  { label: "Ground", value: "Ground Spice" },
+  { label: "Variety", value: "Named Variety" },
+  { label: "Service", value: "Trade Service" },
+] as const;
 
 export function ProductCard({
   product,
@@ -15,6 +27,9 @@ export function ProductCard({
   product: (typeof products)[number];
   index?: number;
 }) {
+  const { toggleBasketItem, isInBasket } = useQuote();
+  const added = isInBasket(product.slug);
+
   return (
     <Reveal as="article" delay={index} className="h-full">
       <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-cream-line bg-card transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-accent/25 hover:shadow-[0_24px_50px_-24px_rgba(30,17,64,0.35)]">
@@ -85,9 +100,21 @@ export function ProductCard({
               />
             </Link>
 
-            <QuoteButton product={product.name} variant="outline" size="sm">
-              Get quote
-            </QuoteButton>
+            <button
+              type="button"
+              onClick={() => toggleBasketItem(product.slug)}
+              className={cn(
+                "flex h-10 items-center rounded-full px-3.5 text-[13px] font-semibold transition-colors",
+                added
+                  ? // Brand tokens (stay dark/light in both themes), not
+                    // heading/cream — those flip independently and wash
+                    // out against each other in dark mode.
+                    "bg-violet-900 text-cream"
+                  : "border border-outline/16 bg-card text-heading",
+              )}
+            >
+              {added ? "✓ On quote list" : "+ Add to quote"}
+            </button>
           </div>
         </div>
       </div>
@@ -96,6 +123,10 @@ export function ProductCard({
 }
 
 export function Products() {
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]["value"]>("All");
+  const visible =
+    filter === "All" ? products : products.filter((p) => p.category === filter);
+
   return (
     <Section id="products" className="bg-cream-deep/40">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
@@ -121,14 +152,32 @@ export function Products() {
         </p>
       </Reveal>
 
-      <div className="mt-12 hidden gap-6 lg:grid lg:grid-cols-3">
-        {products.map((product, i) => (
+      <div className="mt-8 flex flex-wrap gap-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.value}
+            type="button"
+            onClick={() => setFilter(f.value)}
+            className={cn(
+              "flex h-10 items-center rounded-full border px-4 text-[13px] font-medium transition-colors",
+              filter === f.value
+                ? "border-transparent bg-chilli text-cream"
+                : "border-outline/15 bg-card text-ink-mid hover:border-outline/30 hover:text-heading",
+            )}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 hidden gap-6 lg:grid lg:grid-cols-3">
+        {visible.map((product, i) => (
           <ProductCard key={product.slug} product={product} index={i % 3} />
         ))}
       </div>
 
       {/* Mobile/tablet: list rows + basket toggle instead of cards (below `lg`) */}
-      <MobileProductList />
+      <MobileProductList products={visible} />
 
       {/* Shared trade terms — identical for every line, so stated once */}
       <Reveal delay={1}>

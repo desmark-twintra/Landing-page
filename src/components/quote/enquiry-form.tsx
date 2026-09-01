@@ -175,6 +175,7 @@ export function EnquiryForm({
             autoComplete="name"
             placeholder="Full name"
             className={fieldBase}
+            aria-required="true"
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? `${uid}-name-err` : undefined}
             {...register("name")}
@@ -208,6 +209,7 @@ export function EnquiryForm({
             autoComplete="email"
             placeholder="you@company.com"
             className={fieldBase}
+            aria-required="true"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? `${uid}-email-err` : undefined}
             {...register("email")}
@@ -244,6 +246,7 @@ export function EnquiryForm({
           <SelectTrigger
             id={`${uid}-buyer`}
             onBlur={buyerTypeField.field.onBlur}
+            aria-required="true"
             aria-invalid={!!errors.buyerType}
             aria-describedby={errors.buyerType ? `${uid}-buyer-err` : undefined}
           >
@@ -337,6 +340,7 @@ export function EnquiryForm({
           rows={compact ? 4 : 5}
           placeholder="Tell us about grade, packing, delivery location and timeline — whatever you already know."
           className={cn(fieldBase, "resize-y")}
+          aria-required="true"
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? `${uid}-message-err` : undefined}
           {...register("message")}

@@ -180,12 +180,24 @@ export function SiteHeader() {
             />
           )}
 
-          <QuoteButton
-            variant={solid ? "primary" : "violet"}
-            size="sm"
-            interactive
-            className="hidden lg:inline-flex"
-          />
+          <div className="relative hidden lg:inline-flex">
+            <QuoteButton
+              variant={solid ? "primary" : "glass"}
+              size="sm"
+              interactive
+              className="inline-flex"
+            />
+            {basket.length > 0 && (
+              <button
+                type="button"
+                onClick={openBasket}
+                aria-label={`Quote list, ${basket.length} selected`}
+                className="absolute -right-1 -top-1 flex size-4.5 items-center justify-center rounded-full bg-chilli text-[10px] font-semibold text-cream"
+              >
+                {basket.length}
+              </button>
+            )}
+          </div>
 
           <button
             type="button"
