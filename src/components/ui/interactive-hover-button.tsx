@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-export type HoverButtonVariant = "violet" | "glass" | "primary";
+export type HoverButtonVariant = "glass" | "primary";
 export type HoverButtonSize = "sm" | "md" | "lg";
 
 const base =
@@ -13,11 +13,6 @@ const variants: Record<
   HoverButtonVariant,
   { root: string; dot: string; reveal: string }
 > = {
-  violet: {
-    root: "bg-violet-600 text-white shadow-[0_0_0_1px_rgba(167,139,250,0.35),0_10px_30px_-10px_rgba(139,92,246,0.85)]",
-    dot: "bg-white",
-    reveal: "text-violet-700",
-  },
   glass: {
     root: "border border-panel-ink/20 bg-panel-ink/10 text-panel-ink backdrop-blur-md",
     dot: "bg-panel-ink",
@@ -77,7 +72,7 @@ type InteractiveHoverButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 };
 
 export function InteractiveHoverButton({
-  variant = "violet",
+  variant = "primary",
   size = "md",
   className,
   children,
@@ -99,7 +94,7 @@ type InteractiveHoverLinkProps = React.ComponentProps<typeof Link> & {
 };
 
 export function InteractiveHoverLink({
-  variant = "violet",
+  variant = "primary",
   size = "md",
   className,
   children,

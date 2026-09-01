@@ -4,7 +4,6 @@ export type ButtonVariant =
   | "primary"
   | "outline"
   | "glass"
-  | "violet"
   | "ghost";
 
 export type ButtonSize = "sm" | "md" | "lg";
@@ -19,8 +18,6 @@ const variants: Record<ButtonVariant, string> = {
     "border border-outline/20 bg-transparent text-heading hover:border-outline/45 hover:bg-outline/[0.04]",
   glass:
     "border border-panel-ink/20 bg-panel-ink/10 text-panel-ink backdrop-blur-md hover:border-panel-ink/35 hover:bg-panel-ink/16",
-  violet:
-    "bg-violet-600 text-white shadow-[0_0_0_1px_rgba(167,139,250,0.35),0_10px_30px_-10px_rgba(139,92,246,0.85)] hover:bg-violet-500 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(196,181,253,0.5),0_14px_38px_-10px_rgba(139,92,246,0.95)] active:translate-y-0",
   ghost: "bg-transparent text-heading hover:bg-outline/[0.06]",
 };
 

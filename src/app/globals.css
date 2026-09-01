@@ -34,6 +34,8 @@
   --color-chilli-warm: #e05f3a;
   --color-amber: #d4880a;
   --color-gold: #b8922a;
+  --color-paprika: #d64528;
+  --color-saffron: #e8a13c;
 
   /* Ink */
   --color-ink: #1a1a1a;
@@ -85,7 +87,7 @@
 /* ═══════════════════════════════════════════════════════════
    Dark theme
    Anchored on #22272e — a desaturated blue-grey, deliberately
-   not pure black, so the always-dark violet panels (#1e1140)
+   not pure black, so the always-dark warm-charcoal panels (#1c1815)
    still read as a distinct band against it.
    Unlayered, so it outranks the `@theme` values in `@layer theme`.
    ═══════════════════════════════════════════════════════════ */
@@ -116,10 +118,11 @@
 
   --paper-dot: rgba(200, 210, 222, 0.05);
 
-  /* Dark theme: the panel keeps today's always-dark violet look unchanged. */
-  --color-panel: #1e1140;
+  /* Dark theme: the panel is a warm near-black chilli band, not violet. */
+  --color-panel: #1c1815;
   --color-panel-ink: #faf6ee;
-  --color-panel-accent: #c4b5fd;
+  --color-panel-accent: #e8a13c;
+  --color-panel-elevated: #2a2320;
 }
 
 @layer base {
@@ -175,7 +178,7 @@
   }
 
   .dark .bg-hero-mesh {
-    background-color: var(--color-violet-950);
+    background-color: var(--color-panel);
     background-image:
       radial-gradient(
         ellipse 60% 55% at 12% 8%,
@@ -189,20 +192,20 @@
       ),
       radial-gradient(
         ellipse 70% 65% at 24% 42%,
-        rgba(140, 88, 235, 0.55) 0%,
+        rgba(224, 95, 58, 0.5) 0%,
         transparent 64%
       ),
       radial-gradient(
         ellipse 65% 70% at 78% 30%,
-        rgba(92, 46, 178, 0.62) 0%,
+        rgba(214, 69, 40, 0.55) 0%,
         transparent 66%
       ),
       radial-gradient(
         ellipse 90% 80% at 50% 100%,
-        rgba(18, 10, 38, 0.9) 0%,
+        rgba(14, 11, 9, 0.9) 0%,
         transparent 70%
       ),
-      linear-gradient(155deg, #2a1657 0%, #1d1042 38%, #150c31 70%, #100822 100%);
+      linear-gradient(155deg, #2a2320 0%, #221c19 38%, #1c1815 70%, #130f0d 100%);
   }
 
   /* Fine grid lines, matching the original profile's hero treatment */

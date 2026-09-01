@@ -30,7 +30,7 @@ export function QuoteButton({
     return (
       <InteractiveHoverButton
         type="button"
-        variant={variant as "violet" | "glass" | "primary"}
+        variant={variant as "glass" | "primary"}
         size={size}
         className={className}
         onClick={() => open(product)}
