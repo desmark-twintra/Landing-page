@@ -43,3 +43,7 @@ original-619207556424cf427a01774d85ed88fb.mp4
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# design canvas source for the hero animation — 11MB of author-time
+# material; the app ships only the converted public/products/chilli-pile.webp
+Desmark Chilli Animation/
