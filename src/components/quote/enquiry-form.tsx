@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState } from "react";
-import { useController, useForm } from "react-hook-form";
+import { useController, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check, Loader2, TriangleAlert } from "lucide-react";
 import {
   BUYER_TYPES,
-  QUANTITY_UNITS,
   enquiryDefaults,
   enquirySchema,
   type EnquiryInput,
@@ -58,27 +57,30 @@ export function EnquiryForm({
   const [status, setStatus] = useState<"idle" | "sent">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const { basket, clearBasket } = useQuote();
-  const basketNames = useMemo(
-    () => basket.map((slug) => getProduct(slug)?.name).filter((n): n is string => Boolean(n)),
-    [basket],
+  const { enquiryList, clearEnquiryList } = useQuote();
+  const listedNames = useMemo(
+    () =>
+      enquiryList
+        .map((slug) => getProduct(slug)?.name)
+        .filter((n): n is string => Boolean(n)),
+    [enquiryList],
   );
 
   /**
-   * The mobile "quote list" basket is client-only state, layered on top of
-   * the existing single-`product` enquiry schema rather than changing it: one
-   * basket item preselects that product like `presetProduct` always did; two
-   * or more get folded into the default message text instead.
+   * The enquiry list is client-only state, layered on top of the existing
+   * single-`product` schema rather than changing it: one listed item
+   * preselects that product like `presetProduct` always did; two or more get
+   * folded into the default message text instead.
    */
-  function basketAwareDefaults(): EnquiryInput {
+  function listAwareDefaults(): EnquiryInput {
     if (presetProduct) return { ...enquiryDefaults, product: presetProduct };
-    if (basketNames.length === 1) {
-      return { ...enquiryDefaults, product: basketNames[0] };
+    if (listedNames.length === 1) {
+      return { ...enquiryDefaults, product: listedNames[0] };
     }
-    if (basketNames.length > 1) {
+    if (listedNames.length > 1) {
       return {
         ...enquiryDefaults,
-        message: `Interested in: ${basketNames.join(", ")}\n\n`,
+        message: `Interested in: ${listedNames.join(", ")}\n\n`,
       };
     }
     return { ...enquiryDefaults, product: "" };
@@ -92,20 +94,25 @@ export function EnquiryForm({
     formState: { errors, isSubmitting, isDirty },
   } = useForm<EnquiryInput>({
     resolver: zodResolver(enquirySchema),
-    defaultValues: basketAwareDefaults(),
+    defaultValues: listAwareDefaults(),
   });
 
   const buyerTypeField = useController({ control, name: "buyerType" });
   const productField = useController({ control, name: "product" });
-  const unitField = useController({ control, name: "unit" });
 
-  // Keep the form's defaults in step with the basket while the buyer hasn't
+  // Drives the trailing "kg" affix — it only appears once there is a number
+  // to qualify, so the empty field stays clean. `useWatch` rather than the
+  // form's `watch()`: the latter returns a fresh function each render, which
+  // opts the whole component out of React Compiler memoization.
+  const quantityValue = useWatch({ control, name: "quantity" });
+
+  // Keep the form's defaults in step with the list while the buyer hasn't
   // started typing — e.g. they add products, then scroll straight to Contact.
   useEffect(() => {
     if (isDirty) return;
-    reset(basketAwareDefaults());
+    reset(listAwareDefaults());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [basketNames.join("|")]);
+  }, [listedNames.join("|")]);
 
   async function onSubmit(values: EnquiryInput) {
     setServerError(null);
@@ -117,7 +124,7 @@ export function EnquiryForm({
     }
 
     setStatus("sent");
-    clearBasket();
+    clearEnquiryList();
     reset({ ...enquiryDefaults, product: presetProduct ?? "" });
     onSuccess?.();
   }
@@ -153,13 +160,13 @@ export function EnquiryForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-      {!presetProduct && basketNames.length > 0 && (
+      {!presetProduct && listedNames.length > 0 && (
         <div className="rounded-xl bg-cream-deep/60 px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-            On your quote list
+            On your enquiry list
           </p>
           <p className="mt-1 text-[14px] leading-[1.45] text-heading">
-            {basketNames.join(" · ")}
+            {listedNames.join(" · ")}
           </p>
         </div>
       )}
@@ -288,45 +295,32 @@ export function EnquiryForm({
           </div>
 
           <div>
+            {/* Everything is quoted in kg, so the unit is stated in the label
+                rather than asked for — the affix below is decorative. */}
             <label htmlFor={`${uid}-quantity`} className={labelBase}>
-              Indicative quantity
+              Indicative quantity (kg)
             </label>
-            <div className="flex gap-2">
+            <div className="relative">
               <input
                 id={`${uid}-quantity`}
                 type="text"
                 inputMode="numeric"
                 placeholder="e.g. 500"
-                className={cn(fieldBase, "flex-1")}
+                className={cn(fieldBase, "pr-12")}
                 aria-invalid={!!errors.quantity}
                 aria-describedby={errors.quantity ? `${uid}-quantity-err` : undefined}
                 {...register("quantity")}
               />
-              <Select
-                value={unitField.field.value}
-                onValueChange={unitField.field.onChange}
-              >
-                <SelectTrigger
-                  aria-label="Quantity unit"
-                  onBlur={unitField.field.onBlur}
-                  aria-invalid={!!errors.unit}
-                  aria-describedby={errors.unit ? `${uid}-unit-err` : undefined}
-                  className="w-32 shrink-0"
+              {quantityValue && (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-ink-muted/50"
                 >
-                  <SelectValue placeholder="Unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Unit</SelectItem>
-                  {QUANTITY_UNITS.map((u) => (
-                    <SelectItem key={u} value={u}>
-                      {u}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  kg
+                </span>
+              )}
             </div>
             <FieldError id={`${uid}-quantity-err`} message={errors.quantity?.message} />
-            <FieldError id={`${uid}-unit-err`} message={errors.unit?.message} />
           </div>
         </div>
       )}

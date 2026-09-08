@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     phone: enquiry.phone || "—",
     buyer_type: enquiry.buyerType,
     product: enquiry.product || "General enquiry",
-    quantity: enquiry.quantity ? `${enquiry.quantity} ${enquiry.unit}` : "—",
+    quantity: enquiry.quantity ? `${enquiry.quantity} kg` : "—",
     message: enquiry.message,
   };
 
