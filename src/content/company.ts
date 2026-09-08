@@ -83,9 +83,8 @@ export const buyerProfiles = [
 ];
 
 export const navLinks = [
-  { href: "/#about", label: "About" },
-  { href: "/#products", label: "Products" },
-  { href: "/#journey", label: "Journey" },
-  { href: "/#compliance", label: "Compliance" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About Us" },
+  { href: "/products", label: "Products" },
+  { href: "/contact", label: "Contact Us" },
 ];
