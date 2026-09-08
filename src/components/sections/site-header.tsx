@@ -7,6 +7,8 @@ import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "motion/react";
 import { FileText, Menu, Phone, X } from "lucide-react";
 import { company, contact, navLinks } from "@/content/company";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
+import { whatsappHref } from "@/lib/whatsapp";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { QuoteButton } from "@/components/quote/quote-button";
 import { useQuote } from "@/components/quote/quote-provider";
@@ -16,8 +18,6 @@ import { useScrollViewport } from "@/components/scroll-viewport-context";
 import { useHasMounted, useReducedMotionSafe } from "@/lib/hydration";
 import { cn } from "@/lib/utils";
 
-const SECTION_IDS = navLinks.map((l) => l.href.replace("/#", ""));
-
 export function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -26,17 +26,21 @@ export function SiteHeader() {
   const { resolvedTheme, setTheme } = useTheme();
 
   const [scrolled, setScrolled] = useState(false);
-  const [spied, setSpied] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { basket, openBasket } = useQuote();
+  const { enquiryList, openList } = useQuote();
 
   // The server has no idea which theme will win, so the toggle can't render
   // until after hydration without risking a mismatch.
   const mounted = useHasMounted();
 
-  // Sub-pages have no violet hero to sit over, so the header is always solid
-  // there. Derived rather than stored, so no effect has to correct it.
-  const active = isHome ? spied : null;
+  /**
+   * Now that every nav entry is its own route, "active" is just the current
+   * path. `startsWith` rather than equality so /products/teja-variety keeps
+   * Products lit; Home is exact, since every path starts with "/".
+   */
+  function isActiveHref(href: string) {
+    return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  }
 
   useEffect(() => {
     if (!isHome) return;
@@ -50,30 +54,6 @@ export function SiteHeader() {
     onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [isHome, viewportRef]);
-
-  // Scroll-spy: mark the section currently occupying the upper viewport.
-  useEffect(() => {
-    if (!isHome) return;
-    const root = viewportRef.current;
-    if (!root) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) setSpied(visible[0].target.id);
-      },
-      { root, rootMargin: "-25% 0px -60% 0px", threshold: 0 },
-    );
-
-    for (const id of SECTION_IDS) {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    }
-
-    return () => observer.disconnect();
   }, [isHome, viewportRef]);
 
   useEffect(() => {
@@ -120,8 +100,7 @@ export function SiteHeader() {
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-1">
             {navLinks.map((link) => {
-              const id = link.href.replace("/#", "");
-              const isActive = isHome && active === id;
+              const isActive = isActiveHref(link.href);
 
               return (
                 <li key={link.href}>
@@ -187,22 +166,22 @@ export function SiteHeader() {
               interactive
               className="inline-flex"
             />
-            {basket.length > 0 && (
+            {enquiryList.length > 0 && (
               <button
                 type="button"
-                onClick={openBasket}
-                aria-label={`Quote list, ${basket.length} selected`}
+                onClick={openList}
+                aria-label={`Enquiry list, ${enquiryList.length} selected`}
                 className="absolute -right-1 -top-1 flex size-4.5 items-center justify-center rounded-full bg-chilli text-[10px] font-semibold text-cream"
               >
-                {basket.length}
+                {enquiryList.length}
               </button>
             )}
           </div>
 
           <button
             type="button"
-            onClick={openBasket}
-            aria-label={`Quote list${basket.length ? `, ${basket.length} selected` : ""}`}
+            onClick={openList}
+            aria-label={`Enquiry list${enquiryList.length ? `, ${enquiryList.length} selected` : ""}`}
             className={cn(
               "relative flex size-10 items-center justify-center rounded-full border transition-colors lg:hidden",
               solid
@@ -211,9 +190,9 @@ export function SiteHeader() {
             )}
           >
             <FileText className="size-4.5" aria-hidden />
-            {basket.length > 0 && (
+            {enquiryList.length > 0 && (
               <span className="absolute -right-1 -top-1 flex size-4.5 items-center justify-center rounded-full bg-chilli text-[10px] font-semibold text-cream">
-                {basket.length}
+                {enquiryList.length}
               </span>
             )}
           </button>
@@ -283,6 +262,17 @@ export function SiteHeader() {
                 >
                   <Phone className="size-4" aria-hidden />
                   Call
+                </a>
+
+                <a
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] text-[14px] font-medium text-white transition-opacity hover:opacity-90"
+                >
+                  <WhatsAppIcon className="size-4" />
+                  WhatsApp
                 </a>
               </div>
 

@@ -4,6 +4,9 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
 import { EnquiryForm } from "@/components/quote/enquiry-form";
+import { buttonStyles } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
+import { whatsappHref } from "@/lib/whatsapp";
 
 const details: {
   icon: typeof Building2;
@@ -106,6 +109,23 @@ export function Contact() {
                 </div>
               ))}
             </dl>
+          </Reveal>
+
+          <Reveal delay={2}>
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonStyles({
+                variant: "primary",
+                size: "lg",
+                className:
+                  "mt-6 w-full bg-[#25D366] text-white shadow-none hover:bg-[#1eb457] hover:shadow-none sm:w-auto",
+              })}
+            >
+              <WhatsAppIcon className="size-4.5" />
+              Message us on WhatsApp
+            </a>
           </Reveal>
 
           <Reveal delay={3}>
