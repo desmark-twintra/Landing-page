@@ -1,28 +1,18 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/content/products";
-import { useQuote } from "@/components/quote/quote-provider";
-import { cn } from "@/lib/utils";
+import { buttonStyles } from "@/components/ui/button";
 
 /**
- * Phone/tablet-only product list — rows instead of cards, with a per-product
- * "add to quote" toggle wired into the client-side basket (see
- * quote-provider.tsx). Desktop keeps the existing ProductCard grid untouched.
- * Receives the (possibly category-filtered) list from Products() so mobile
- * and desktop stay in sync with the same filter.
+ * Phone/tablet-only product list — rows instead of cards. Desktop keeps the
+ * ProductCard grid untouched. Receives the (possibly category-filtered) list
+ * from Products() so mobile and desktop stay in sync with the same filter.
  */
 export function MobileProductList({ products }: { products: Product[] }) {
-  const { toggleBasketItem, isInBasket } = useQuote();
-
   return (
     <div className="mt-4 border-t border-cream-line lg:hidden">
-      {products.map((product) => {
-        const added = isInBasket(product.slug);
-
-        return (
+      {products.map((product) => (
           <div
             key={product.slug}
             className="flex gap-3.5 border-b border-cream-line py-4"
@@ -63,35 +53,20 @@ export function MobileProductList({ products }: { products: Product[] }) {
                 ))}
               </div>
 
-              <div className="mt-2.5 flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => toggleBasketItem(product.slug)}
-                  className={cn(
-                    "flex h-10 items-center rounded-full px-3.5 text-[13px] font-semibold transition-colors",
-                    added
-                      ? // Brand tokens (stay dark/light in both themes), not
-                        // heading/cream — those flip independently and wash
-                        // out against each other in dark mode.
-                        "bg-violet-900 text-cream"
-                      : "border border-outline/16 bg-card text-heading",
-                  )}
-                >
-                  {added ? "✓ On quote list" : "+ Add to quote"}
-                </button>
-
+              <div className="mt-3">
                 <Link
                   href={`/products/${product.slug}`}
-                  className="flex h-10 items-center gap-1 text-[13px] font-medium text-heading"
+                  /* `md` (h-11) not `sm` (h-9): this list only renders below
+                     lg, where it is the row's primary tap target. */
+                  className={buttonStyles({ variant: "outline", size: "md" })}
                 >
-                  Details
-                  <ArrowUpRight className="size-3.5 text-chilli" aria-hidden />
+                  View Details
+                  <ArrowUpRight className="size-3.5" aria-hidden />
                 </Link>
               </div>
             </div>
           </div>
-        );
-      })}
+      ))}
     </div>
   );
 }

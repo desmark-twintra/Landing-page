@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, FileText, Phone } from "lucide-react";
 import { getProduct, products, tradeTerms } from "@/content/products";
 import { company } from "@/content/company";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { QuoteButton } from "@/components/quote/quote-button";
+import { AddToEnquiryButton } from "@/components/quote/add-to-enquiry-button";
 import { buttonStyles } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
+import { whatsappHref } from "@/lib/whatsapp";
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
@@ -57,14 +60,37 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
 
         <Container className="pb-16 sm:pb-20">
           <Link
-            href="/#products"
+            href="/products"
             className="inline-flex items-center gap-2 text-[13px] text-panel-ink/55 transition-colors hover:text-panel-ink"
           >
             <ArrowLeft className="size-4" aria-hidden />
             All products
           </Link>
 
+          {/* Media leads, copy follows — on mobile that puts the product in
+              front of the buyer before a word of description. */}
           <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-14">
+            {/* Photo, tinted with the product's gradient */}
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-panel-ink/12">
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 opacity-50 mix-blend-multiply"
+                style={{ backgroundImage: product.gradient }}
+              />
+              <span
+                aria-hidden
+                className="bg-grain absolute inset-0 opacity-[0.2] mix-blend-overlay"
+              />
+            </div>
+
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
                 {product.category}
@@ -78,35 +104,38 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <QuoteButton product={product.name} variant="primary" size="lg">
+                  <FileText className="size-4" aria-hidden />
                   Request a Quote
                 </QuoteButton>
+
+                <a
+                  href={whatsappHref(product.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Enquire about ${product.name} on WhatsApp`}
+                  className={buttonStyles({
+                    variant: "primary",
+                    size: "lg",
+                    className:
+                      "bg-[#25D366] text-white shadow-none hover:bg-[#1eb457] hover:shadow-none",
+                  })}
+                >
+                  <WhatsAppIcon className="size-4" />
+                  WhatsApp
+                </a>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-3">
+                <AddToEnquiryButton slug={product.slug} />
+
                 <Link
-                  href="/#contact"
+                  href="/contact"
                   className={buttonStyles({ variant: "glass", size: "lg" })}
                 >
+                  <Phone className="size-4" aria-hidden />
                   Talk to us
                 </Link>
               </div>
-            </div>
-
-            {/* Photo, tinted with the product's gradient */}
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-panel-ink/12">
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
-              />
-              <span
-                aria-hidden
-                className="absolute inset-0 opacity-50 mix-blend-multiply"
-                style={{ backgroundImage: product.gradient }}
-              />
-              <span
-                aria-hidden
-                className="bg-grain absolute inset-0 opacity-[0.2] mix-blend-overlay"
-              />
             </div>
           </div>
         </Container>
@@ -213,6 +242,7 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
                 size="lg"
                 className="shrink-0"
               >
+                <FileText className="size-4" aria-hidden />
                 Request a Quote
               </QuoteButton>
             </div>
@@ -227,7 +257,7 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
             Other lines we trade
           </h2>
           <Link
-            href="/#products"
+            href="/products"
             className="hidden shrink-0 items-center gap-1.5 text-[13.5px] font-medium text-heading transition-colors hover:text-accent sm:inline-flex"
           >
             View all

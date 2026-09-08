@@ -8,7 +8,7 @@ import { products, productsIntro, tradeTerms } from "@/content/products";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { useQuote } from "@/components/quote/quote-provider";
+import { buttonStyles } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { MobileProductList } from "./mobile-product-list";
 
@@ -27,9 +27,6 @@ export function ProductCard({
   product: (typeof products)[number];
   index?: number;
 }) {
-  const { toggleBasketItem, isInBasket } = useQuote();
-  const added = isInBasket(product.slug);
-
   return (
     <Reveal as="article" delay={index} className="h-full">
       <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-cream-line bg-card transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-accent/25 hover:shadow-[0_24px_50px_-24px_rgba(30,17,64,0.35)]">
@@ -88,33 +85,21 @@ export function ProductCard({
             ))}
           </ul>
 
-          <div className="mt-auto flex items-center justify-between gap-3 pt-6">
+          <div className="mt-auto pt-6">
             <Link
               href={`/products/${product.slug}`}
-              className="group/link inline-flex items-center gap-1.5 text-[13.5px] font-medium text-heading transition-colors hover:text-accent"
+              className={buttonStyles({
+                variant: "outline",
+                size: "md",
+                className: "group/link w-full",
+              })}
             >
-              View details
+              View Details
               <ArrowUpRight
                 className="size-4 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
                 aria-hidden
               />
             </Link>
-
-            <button
-              type="button"
-              onClick={() => toggleBasketItem(product.slug)}
-              className={cn(
-                "flex h-10 items-center rounded-full px-3.5 text-[13px] font-semibold transition-colors",
-                added
-                  ? // Brand tokens (stay dark/light in both themes), not
-                    // heading/cream — those flip independently and wash
-                    // out against each other in dark mode.
-                    "bg-violet-900 text-cream"
-                  : "border border-outline/16 bg-card text-heading",
-              )}
-            >
-              {added ? "✓ On quote list" : "+ Add to quote"}
-            </button>
           </div>
         </div>
       </div>
