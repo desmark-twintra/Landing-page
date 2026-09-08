@@ -21,6 +21,9 @@ export function AppScrollArea({ children }: { children: React.ReactNode }) {
       viewportProps={{
         ref: viewportRef,
         id: "app-scroll-viewport",
+        // Horizontal scrolling is suppressed in globals.css, keyed off this
+        // class — Base UI sets the viewport's overflow inline, so a utility
+        // class here would lose to it.
         className: "app-scroll-viewport",
       }}
     >

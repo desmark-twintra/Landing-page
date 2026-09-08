@@ -143,7 +143,75 @@
      and anchor-offset behavior that used to live on html lives here instead. */
   .app-scroll-viewport {
     scroll-behavior: smooth;
-    scroll-padding-top: 6.5rem;
+    scroll-padding-top: 5.5rem;
+  }
+
+  /* The page scrolls vertically only. Base UI ships the viewport with an
+     inline `overflow: scroll` and its content wrapper with an inline
+     `min-width: fit-content` — sensible defaults for a generic scroll box,
+     but here they let any single over-wide element (a marquee track, a
+     `whitespace-nowrap` run) stretch the whole page and drag the layout
+     sideways. Both are inline styles, so overriding them needs `!important`;
+     these two rules are scoped to the app viewport alone, so nested
+     ScrollAreas keep the primitive's normal behavior. */
+  .app-scroll-viewport {
+    overflow-x: hidden !important;
+    overscroll-behavior-x: none;
+  }
+
+  .app-scroll-viewport > [data-slot="scroll-area-content"] {
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+
+  /* The hero intro plays before the copy appears, and the copy has to be
+     hidden in the very first painted frame — not once React has hydrated.
+     The server sends the settled hero with the copy visible (so the `h1` is
+     there for crawlers and for anyone without scripts), and the blocking
+     script in <head> stamps `data-hero-intro="run"` only when the intro is
+     actually about to play. This rule is what wins that first paint.
+
+     `!important` because the element also carries Tailwind's opacity/transform
+     utilities, which React swaps as the animation progresses; once the intro
+     reaches its reveal the attribute is dropped and those utilities take over
+     cleanly. */
+  /* The pile has the same problem as the copy, one step earlier: the server
+     sends it at its settled position, so the browser paints it in the
+     right-hand slot before any script has run and it visibly jumps to centre
+     when the intro starts. Holding it invisible until React has measured the
+     offset means its first visible frame is already the centred one. */
+  html[data-hero-pile-hidden] [data-hero-pile] {
+    opacity: 0 !important;
+    /* Same safety net as the copy: if hydration never lands, nothing would
+       remove the attribute and the hero image would stay invisible. */
+    animation: hero-pile-failsafe 0.4s ease-out 3s forwards;
+  }
+
+  @keyframes hero-pile-failsafe {
+    to {
+      opacity: 1;
+    }
+  }
+
+  html[data-hero-intro="run"] [data-hero-copy] {
+    opacity: 0 !important;
+    transform: translateY(1rem) !important;
+    pointer-events: none !important;
+    /* Safety net. If hydration never happens — a chunk fails, JS is blocked
+       after the head script ran — nothing would remove the attribute and the
+       copy would stay invisible for good. This animation reveals it on its own
+       just after the intro would have finished, so the page is always readable
+       even when the script half of this never arrives. React normally drops the
+       attribute before it reaches its end. */
+    animation: hero-copy-failsafe 0.4s ease-out 3s forwards;
+  }
+
+  @keyframes hero-copy-failsafe {
+    to {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
   }
 
   ::selection {

@@ -30,7 +30,10 @@ function MarkedText({ text }: { text: string }) {
 
 export function About() {
   return (
-    <Section id="about" className="bg-paper-dots">
+    /* `overflow-hidden`: the stat-grid wash below is `-inset-6`, so it
+       reaches past the container's right edge at `lg` and would otherwise
+       give the whole page a horizontal scrollbar. */
+    <Section id="about" className="overflow-hidden bg-paper-dots">
       <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         <Reveal>
           <SectionHeading label={aboutCopy.label} title={aboutCopy.title} />
