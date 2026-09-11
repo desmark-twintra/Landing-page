@@ -13,6 +13,8 @@ import { AddToEnquiryButton } from "@/components/quote/add-to-enquiry-button";
 import { buttonStyles } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { whatsappHref } from "@/lib/whatsapp";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd, productJsonLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
@@ -29,10 +31,12 @@ export async function generateMetadata(
   return {
     title: product.name,
     description: product.summary,
+    alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       title: `${product.name} · ${company.name}`,
       description: product.summary,
       type: "article",
+      url: `/products/${product.slug}`,
     },
   };
 }
@@ -47,6 +51,8 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
 
   return (
     <>
+      <JsonLd data={[productJsonLd(product), breadcrumbJsonLd(product)]} />
+
       {/* ─── Product hero ─── */}
       <section className="on-dark relative isolate overflow-hidden bg-panel pt-28 sm:pt-32">
         <span

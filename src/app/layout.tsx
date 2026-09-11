@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Outfit, Ubuntu } from "next/font/google";
-import { company, contact } from "@/content/company";
+import { company } from "@/content/company";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
+import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/sections/site-header";
 import { MobileCtaBar } from "@/components/sections/mobile-cta-bar";
 import { DesktopEnquireBar } from "@/components/sections/desktop-enquire-bar";
@@ -26,7 +29,7 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://desmarktwintra.example"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${company.name} — ${company.tagline}`,
     template: `%s · ${company.name}`,
@@ -43,49 +46,38 @@ export const metadata: Metadata = {
     "Chennai spice trading",
   ],
   authors: [{ name: company.name }],
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: company.name,
     title: `${company.name} — ${company.tagline}`,
     description: company.heroLead,
     locale: "en_IN",
+    url: "/",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: `${company.name} — ${company.tagline}`,
     description: company.heroLead,
+    images: [OG_IMAGE],
   },
-  robots: { index: true, follow: true },
-};
-
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: company.name,
-  description: company.heroLead,
-  slogan: company.tagline,
-  foundingDate: String(company.established),
-  email: contact.email,
-  telephone: contact.phone,
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Chennai",
-    addressRegion: "Tamil Nadu",
-    addressCountry: "IN",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  knowsAbout: [
-    "Dried red chilli",
-    "Chilli powder",
-    "Teja chilli",
-    "Sannam chilli",
-    "Agricultural commodity trading",
-  ],
+  /* Set NEXT_PUBLIC_GSC_VERIFICATION in Vercel once Search Console is claimed;
+     unset, the field is omitted rather than emitting an empty meta tag. */
+  ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       data-scroll-behavior="smooth"
       // next-themes stamps the theme class onto <html> before paint, which the
       // server render cannot predict.
@@ -116,11 +108,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="flex h-full flex-col overflow-hidden bg-surface">
-        <script
-          type="application/ld+json"
-          // Static, author-controlled metadata — no user input reaches this.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-        />
+        <JsonLd data={[organizationJsonLd, webSiteJsonLd]} />
 
         <ThemeProvider
           attribute="class"

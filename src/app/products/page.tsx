@@ -1,17 +1,29 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import { company } from "@/content/company";
-import { productsIntro } from "@/content/products";
+import { products, productsIntro } from "@/content/products";
 import { Container } from "@/components/ui/container";
 import { Products } from "@/components/sections/products";
+import { JsonLd } from "@/components/json-ld";
+import { productListJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Products",
-  description: `${productsIntro.lead.slice(0, 155)}…`,
+  description: productsIntro.metaDescription,
+  alternates: { canonical: "/products" },
+  openGraph: {
+    type: "website",
+    url: "/products",
+    title: `Products · ${company.name}`,
+    description: productsIntro.metaDescription,
+    images: [OG_IMAGE],
+  },
 };
 
 export default function ProductsPage() {
   return (
     <>
+      <JsonLd data={productListJsonLd(products)} />
       {/* Page header — clears the fixed h-18 site header */}
       <section className="on-dark relative isolate overflow-hidden bg-panel pb-16 pt-28 sm:pb-20 sm:pt-32">
         <span

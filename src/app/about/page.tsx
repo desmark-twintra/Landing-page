@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import { company } from "@/content/company";
 import { Container } from "@/components/ui/container";
 import { About } from "@/components/sections/about";
@@ -7,15 +8,28 @@ import { JourneyStepper } from "@/components/sections/journey-stepper";
 import { WhyUs } from "@/components/sections/why-us";
 import { VisionMission } from "@/components/sections/vision-mission";
 import { Compliance } from "@/components/sections/compliance";
+import { JsonLd } from "@/components/json-ld";
+import { aboutPageJsonLd } from "@/lib/structured-data";
+
+const aboutDescription = `${company.name} — a government-registered agricultural trading partnership specialising in Indian chillies, built on compliance, quality-driven sourcing and transparent trade.`;
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: `${company.name} — a government-registered agricultural trading partnership specialising in Indian chillies, built on compliance, quality-driven sourcing and transparent trade.`,
+  description: aboutDescription,
+  alternates: { canonical: "/about" },
+  openGraph: {
+    type: "website",
+    url: "/about",
+    title: `About Us · ${company.name}`,
+    description: aboutDescription,
+    images: [OG_IMAGE],
+  },
 };
 
 export default function AboutPage() {
   return (
     <>
+      <JsonLd data={aboutPageJsonLd} />
       {/* Page header — clears the fixed h-18 site header */}
       <section className="on-dark relative isolate overflow-hidden bg-panel pb-16 pt-28 sm:pb-20 sm:pt-32">
         <span
