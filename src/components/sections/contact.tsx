@@ -55,6 +55,7 @@ export function Contact() {
         <div>
           <Reveal>
             <SectionHeading
+              as="h1"
               label="Get in Touch"
               title="Let's Trade Together"
               tone="dark"

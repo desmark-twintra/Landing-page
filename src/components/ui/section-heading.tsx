@@ -6,6 +6,9 @@ type SectionHeadingProps = {
   /** Optional supporting sentence under the title. */
   lead?: string;
   align?: "left" | "center";
+  /** Heading level. Defaults to h2; pass "h1" where this lockup is the page
+   *  title, as on /contact, so every route has exactly one h1. */
+  as?: "h1" | "h2";
   tone?: "light" | "dark";
   className?: string;
 };
@@ -20,6 +23,7 @@ export function SectionHeading({
   lead,
   align = "left",
   tone = "light",
+  as: Heading = "h2",
   className,
 }: SectionHeadingProps) {
   const centered = align === "center";
@@ -43,7 +47,7 @@ export function SectionHeading({
         </span>
       </div>
 
-      <h2
+      <Heading
         className={cn(
           "mt-5 max-w-3xl font-display text-[2rem] leading-[1.12] tracking-[-0.015em] text-balance-tight sm:text-[2.6rem] lg:text-[3.1rem]",
           onDark ? "text-panel-ink" : "text-heading",
@@ -55,7 +59,7 @@ export function SectionHeading({
             {line}
           </span>
         ))}
-      </h2>
+      </Heading>
 
       {lead && (
         <p

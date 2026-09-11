@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Globe, Target } from "lucide-react";
 import { pillars, visionMissionIntro } from "@/content/vision-mission";
 import { Section } from "@/components/ui/section";
@@ -25,19 +26,25 @@ export function VisionMission() {
               <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-cream-line bg-card transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-[0_28px_56px_-28px_rgba(30,17,64,0.4)]">
                 {/* Artwork panel — swaps to a photograph by setting `image` in content */}
                 <div className="relative aspect-[2/1] overflow-hidden">
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
-                    style={
-                      pillar.image
-                        ? {
-                            backgroundImage: `url(${pillar.image})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                          }
-                        : { backgroundImage: pillar.gradient }
-                    }
-                  />
+                  {/* Routed through next/image so the source PNGs are resized
+                      and served as AVIF/WebP. As a raw CSS background they
+                      bypassed the optimiser entirely — ~2.5 MB each. */}
+                  {pillar.image ? (
+                    <Image
+                      src={pillar.image}
+                      alt=""
+                      aria-hidden
+                      fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
+                      style={{ backgroundImage: pillar.gradient }}
+                    />
+                  )}
                   <span
                     aria-hidden
                     className="bg-grain absolute inset-0 opacity-[0.16] mix-blend-overlay"
