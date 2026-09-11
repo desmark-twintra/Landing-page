@@ -14,7 +14,7 @@ export const company = {
 
 export const contact = {
   company: "Desmark Twintra LLP",
-  email: "desmarkit@gmail.com",
+  email: "desmarktwintrallp@gmail.com",
   phone: "+91 80562 50963",
   phoneHref: "+918056250963",
   phones: [
@@ -22,7 +22,7 @@ export const contact = {
     { display: "+91 97898 65274", href: "+919789865274" },
   ],
   location: "Chennai, Tamil Nadu, India",
-  website: null as string | null,
+  website: "https://desmark-twintra.vercel.app",
   gstin: "33AAZFD7884N1ZA",
 } as const;
 

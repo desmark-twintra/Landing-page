@@ -75,18 +75,23 @@ blocks first paint. Product gradients live on each product in `content/products.
 
 Every animation is gated behind `prefers-reduced-motion`.
 
-## Wiring up the contact form
+## The contact form
 
-The enquiry UI is complete and works end to end today. Only delivery is stubbed.
+The enquiry UI works end to end and delivers real mail via
+[EmailJS](https://www.emailjs.com), server-side through
+[`src/app/api/quote/route.ts`](src/app/api/quote/route.ts). That route validates
+the payload with the shared zod schema, absorbs honeypot submissions silently,
+sends the enquiry, then fires a best-effort auto-reply to the buyer. Delivery
+failures return `{ ok: false }` with a 502; the form surfaces the message and
+lets the user retry.
 
-**One file to change:** [`src/app/api/quote/route.ts`](src/app/api/quote/route.ts).
-It already validates the payload with the shared zod schema, absorbs honeypot
-submissions, and returns `{ ok: true }`. A marked `TODO:` block shows exactly where to
-add email (Resend/Nodemailer), a CRM push, or a database insert.
+**Destination inbox:** `contact.email` in
+[`src/content/company.ts`](src/content/company.ts) — passed to the template as
+`to_email`. The EmailJS template's own "To Email" field must be set to
+`{{to_email}}` for that to take effect.
 
-Read credentials from environment variables — put them in `.env.local` (git-ignored)
-and never inline them. Return `{ ok: false }` with a 502 if delivery fails; the form
-already surfaces the error message and lets the user retry.
+**Credentials** live in `.env` (git-ignored); see `.env.example` for the five
+`EMAILJS_*` keys. None are `NEXT_PUBLIC_*`, so the private key stays server-side.
 
 Nothing in the UI layer needs to change: both the contact form and the quote drawer go
 through `submitEnquiry()` in `src/lib/enquiry.ts`, which posts to that one route.
