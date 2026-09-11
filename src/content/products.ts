@@ -34,6 +34,10 @@ export const productsIntro = {
   lead: "India is the world's largest producer and exporter of chillies, and Desmark Twintra is positioned to be a reliable intermediary in this ecosystem. We source high-quality dried red chillies, chilli powder, and related variants from established growing regions, ensuring consistent quality grades for both domestic and future export shipments.",
   flagship: "Flagship Category",
   flagshipName: "Red Chillies & Chilli Variants",
+  /* Written to length for search results — `lead` is prose and truncates
+     mid-sentence when sliced. */
+  metaDescription:
+    "Dried red chillies, chilli powder and named varieties — Teja and Sannam — sourced from established Indian growing regions and graded before every lot is committed.",
 };
 
 export const products: Product[] = [
@@ -85,7 +89,7 @@ export const products: Product[] = [
       "Teja is among the most recognised Indian chilli varieties in international trade, valued for its pungency and its use in extraction and processing. We source it as a named variety so buyers who specify Teja receive Teja — traceable to the growing region, with grading confirmed before the lot is committed.",
     gradient:
       "radial-gradient(ellipse 60% 55% at 50% 42%, rgba(255,42,0,0.68) 0%, transparent 58%), radial-gradient(ellipse 42% 30% at 22% 38%, rgba(210,18,0,0.58) 0%, transparent 52%), radial-gradient(ellipse 38% 28% at 78% 35%, rgba(190,12,0,0.52) 0%, transparent 48%), radial-gradient(ellipse 30% 24% at 45% 78%, rgba(255,58,5,0.42) 0%, transparent 44%), radial-gradient(ellipse 22% 18% at 15% 72%, rgba(168,8,0,0.48) 0%, transparent 38%), linear-gradient(165deg,#4e0600 0%,#820d00 18%,#b01200 36%,#d41800 52%,#9c0e00 70%,#620800 88%,#3c0500 100%)",
-    image: "/products/teja-variety.jpg",
+    image: "/products/teja-variety.png",
     tags: ["High Pungency", "Named Variety", "Export Favourite", "Processing"],
     attributes: [
       { label: "Profile", value: "High pungency" },
